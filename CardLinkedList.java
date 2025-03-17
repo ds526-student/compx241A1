@@ -17,7 +17,7 @@ public class CardLinkedList {
          * @param value - the value of the node
          * @param next - the next node in the list
          */
-        private Node(Card value, Node next) {
+        private Node(Card value, Node next) { 
             this.value = value;
             this.next = next;
         }

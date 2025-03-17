@@ -13,7 +13,7 @@ public class Program {
 
         System.out.println("Getting card at position 0: " + cardsList.getCardAt(0));
 
-        System.out.println("\n \n");
+        System.out.println("\n");
         System.out.println("Adding cards to the list.....");
  
         Card card2 = new Card(2, "Diamonds");
