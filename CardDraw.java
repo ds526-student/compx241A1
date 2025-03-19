@@ -14,20 +14,11 @@ public class CardDraw {
         int handSize = (numOfSuits * numOfCards) / players; // handsize for each player based on the total number of cards and players
         
         // creates a deck of cards
+        String[] suits = {"Hearts", "Diamonds", "Clubs", "Spades"}; // array of suits
         for (int i = 0; i < numOfSuits; i++) {
             for (int j = 0; j < numOfCards; j++) {
-                Card card;
-                if  (i == 0) {
-                    card = new Card(j + 1, "Hearts");
-                } else if (i == 1) {
-                    card = new Card(j + 1, "Diamonds");
-                } else if (i == 2) {
-                    card = new Card(j + 1, "Clubs");
-                } else {
-                    card = new Card(j + 1, "Spades");
-                }
+                Card card = new Card(j + 1, suits[i]);
                 cardsList.add(card);
-
             }
         }
 
@@ -50,23 +41,7 @@ public class CardDraw {
                 cardsList.remove(card);
 
                 // counts the number of each card in the players hand
-                boolean cardExists = false;
-                for (int[] arr : cardsCounterArray) {
-                    if(arr[0] == card.getNumber()){
-                        arr[1]++;
-                        cardExists = true;
-                    }
-                }
-                // if the card does not exist in the players hand, adds it to the array
-                if (!cardExists) {
-                    for (int[] arr : cardsCounterArray) {
-                        if (arr[0] == 0) {
-                            arr[0] = card.getNumber();
-                            arr[1] = 1;
-                            break;
-                        }
-                    }
-                }
+                countCard(cardsCounterArray, card); // Refactored method
 
                 // stores the players hand in the array
                 playerHands[i - 1][0] = "Player " + i;
@@ -75,22 +50,9 @@ public class CardDraw {
                 } else
                 playerHands[i - 1][1] += card.getNumber() + " of " + card.getSuit() + ", ";
             }
-            points = 0;
-
-            // calculates the points earnt by the player
-            for (int[] arr : cardsCounterArray) {
-                if (arr[1] == 1) {
-                    points += arr[0];
-                } else if (arr[1] == 2) {
-                    points += arr[0] * 10;
-                } else if (arr[1] == 3) {
-                    points += arr[0] * 100;
-                } else if (arr[1] == 4) {
-                    points += arr[0] * 1000;
-                }
-                pointsArray[i - 1][0] = i;
-                pointsArray[i - 1][1] = points;
-            }
+            points = calculatePoints(cardsCounterArray); // Refactored method
+            pointsArray[i - 1][0] = i;
+            pointsArray[i - 1][1] = points;
 
             System.out.println("Player " + i + " hand: ");
             player.print();
@@ -98,16 +60,7 @@ public class CardDraw {
         System.out.println("Remaining cards: ");
         cardsList.print();
 
-        // uses bubble sort to sort the players by points in descending order
-        for (int i = 0; i < pointsArray.length; i++) {
-            for (int j = 0; j < pointsArray.length - 1; j++) {
-                if (pointsArray[j][1] < pointsArray[j + 1][1]) {
-                    int[] temp = pointsArray[j];
-                    pointsArray[j] = pointsArray[j + 1];
-                    pointsArray[j + 1] = temp;
-                }
-            }
-        }
+        sortPlayersByPoints(pointsArray); // Refactored method
 
         // prints the points of each player
         System.out.println("Player points: ");
@@ -118,5 +71,45 @@ public class CardDraw {
         // prints the winner and their winning hand
         System.out.println("Winner is player " + pointsArray[0][0] + " with " + pointsArray[0][1] + " points");
         System.out.println("Their winning hand was " + playerHands[pointsArray[0][0] - 1][1]);
+    }
+
+    private static void countCard(int[][] cardsCounterArray, Card card) {
+        boolean cardExists = false;
+        for (int[] arr : cardsCounterArray) {
+            if (arr[0] == card.getNumber()) {
+                arr[1]++;
+                cardExists = true;
+            }
+        }
+        if (!cardExists) {
+            for (int[] arr : cardsCounterArray) {
+                if (arr[0] == 0) {
+                    arr[0] = card.getNumber();
+                    arr[1] = 1;
+                    break;
+                }
+            }
+        }
+    }
+
+    private static int calculatePoints(int[][] cardsCounterArray) {
+        int points = 0;
+        for (int[] arr : cardsCounterArray) {
+            points += arr[0] * Math.pow(10, arr[1] - 1);
+        }
+        return points;
+    }
+
+    // bubble sort to sort the players by points
+    private static void sortPlayersByPoints(int[][] pointsArray) {
+        for (int i = 0; i < pointsArray.length; i++) {
+            for (int j = 0; j < pointsArray.length - 1; j++) {
+                if (pointsArray[j][1] < pointsArray[j + 1][1]) {
+                    int[] temp = pointsArray[j];
+                    pointsArray[j] = pointsArray[j + 1];
+                    pointsArray[j + 1] = temp;
+                }
+            }
+        }
     }
 }
