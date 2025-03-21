@@ -41,7 +41,7 @@ public class CardDraw {
                 cardsList.remove(card);
 
                 // counts the number of each card in the players hand
-                countCard(cardsCounterArray, card); // Refactored method
+                countCard(cardsCounterArray, card);
 
                 // stores the players hand in the array
                 playerHands[i - 1][0] = "Player " + i;
@@ -50,29 +50,39 @@ public class CardDraw {
                 } else
                 playerHands[i - 1][1] += card.getNumber() + " of " + card.getSuit() + ", ";
             }
-            points = calculatePoints(cardsCounterArray); // Refactored method
+            points = calculatePoints(cardsCounterArray);
             pointsArray[i - 1][0] = i;
             pointsArray[i - 1][1] = points;
 
             System.out.println("Player " + i + " hand: ");
             player.print();
+            System.out.println("Player " + pointsArray[i-1][0] + " has " + pointsArray[i-1][1] + " points");
         }
-        System.out.println("Remaining cards: ");
-        cardsList.print();
 
-        sortPlayersByPoints(pointsArray); // Refactored method
+        sortPlayers(pointsArray);
+        int numberOfWinners = multipleWinnersCheck(pointsArray);
 
-        // prints the points of each player
+        // prints the winner/s and their winning hand
+        if (numberOfWinners > 1){
+            System.out.println("Winners:");
+            for (int i = 0; i < numberOfWinners; i++){
+                System.out.println("Player " + pointsArray[i][0] + " with a score of " + pointsArray[i][1] + ", with the hand " + playerHands[pointsArray[i][0] - 1][1]);
+            }
+        }
+        else
+            System.out.println("The winner is Player " + pointsArray[0][0] + " with a score of " + pointsArray[0][1] + ", with the hand " + playerHands[pointsArray[0][0] - 1][1]);
+
         System.out.println("Player points: ");
         for (int[] arr : pointsArray) {
             System.out.println("Player " + arr[0] + " has " + arr[1] + " points");
         }
-
-        // prints the winner and their winning hand
-        System.out.println("Winner is player " + pointsArray[0][0] + " with " + pointsArray[0][1] + " points");
-        System.out.println("Their winning hand was " + playerHands[pointsArray[0][0] - 1][1]);
     }
 
+    /**
+     * Counts the number of each card that a player has
+     * @param cardsCounterArray
+     * @param card
+     */
     private static void countCard(int[][] cardsCounterArray, Card card) {
         boolean cardExists = false;
         for (int[] arr : cardsCounterArray) {
@@ -92,16 +102,53 @@ public class CardDraw {
         }
     }
 
+    /**
+     * Checks the points array to see if there are multiple winners
+     * @param pointsArray
+     * @return returns the number of winners
+     */
+    private static int multipleWinnersCheck(int[][] pointsArray){
+        int winnersPoints = pointsArray[0][1];
+        boolean multWinners = true;
+        int counter = 1;
+        int numberOfWinners = 1;
+
+        while (multWinners) {
+            if (counter >= pointsArray.length) {
+            break;
+            }
+            int points = pointsArray[counter][1];
+            if (points == winnersPoints) {
+            numberOfWinners++;
+            counter++;
+            } else {
+            multWinners = false;
+            }
+        }
+
+        return numberOfWinners;
+    }
+
+    /**
+     * Calculates the points acquired
+     * @param cardsCounterArray
+     * @return returns the points acquired
+     */
     private static int calculatePoints(int[][] cardsCounterArray) {
         int points = 0;
         for (int[] arr : cardsCounterArray) {
-            points += arr[0] * Math.pow(10, arr[1] - 1);
+            int currPoints = arr[0] * (int)Math.pow(10, arr[1] - 1);
+            if (currPoints > points)
+                points = currPoints;
         }
         return points;
     }
 
-    // bubble sort to sort the players by points
-    private static void sortPlayersByPoints(int[][] pointsArray) {
+    /**
+     * Sorts the players by score using bubble sort
+     * @param pointsArray
+     */
+    private static void sortPlayers(int[][] pointsArray) {
         for (int i = 0; i < pointsArray.length; i++) {
             for (int j = 0; j < pointsArray.length - 1; j++) {
                 if (pointsArray[j][1] < pointsArray[j + 1][1]) {
