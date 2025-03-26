@@ -46,9 +46,9 @@ public class CardDraw {
                 // stores the players hand in the array
                 playerHands[i - 1][0] = "Player " + i;
                 if (playerHands[i - 1][1] == null) {
-                    playerHands[i - 1][1] = card.getNumber() + " of " + card.getSuit() + ", ";
+                    playerHands[i - 1][1] = card.getNumber() + " of " + card.getSuit();
                 } else
-                playerHands[i - 1][1] += card.getNumber() + " of " + card.getSuit() + ", ";
+                playerHands[i - 1][1] += ", " + card.getNumber() + " of " + card.getSuit();
             }
             points = calculatePoints(cardsCounterArray);
             pointsArray[i - 1][0] = i;
@@ -71,11 +71,6 @@ public class CardDraw {
         }
         else
             System.out.println("The winner is Player " + pointsArray[0][0] + " with a score of " + pointsArray[0][1] + ", with the hand " + playerHands[pointsArray[0][0] - 1][1]);
-
-        System.out.println("Player points: ");
-        for (int[] arr : pointsArray) {
-            System.out.println("Player " + arr[0] + " has " + arr[1] + " points");
-        }
     }
 
     /**
